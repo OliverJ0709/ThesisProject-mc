@@ -4,17 +4,22 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Movement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] Rigidbody characterRB;
     [SerializeField] Vector3 movementInput;
     [SerializeField] Vector3 movementVector;
-    [SerializeField] float movementSpeed;
-   
+    [SerializeField] public float movementSpeed;
+    bool sprinting;
+    
+
+
     // Start is called before the first frame update
     void Start()
     {
         characterRB = GetComponent<Rigidbody>();
+        sprinting = false;
+        
     }
 
     
@@ -24,7 +29,18 @@ public class Movement : MonoBehaviour
         movementVector = transform.right * movementInput.x + transform.forward * movementInput.z;
         movementVector.y = 0;
 
-        characterRB.velocity = (movementVector * movementSpeed * Time.fixedDeltaTime);
+        //springer snabbare ifall sprinting är true
+        if (sprinting) 
+        {
+            
+            characterRB.velocity = (movementVector * movementSpeed * 2 * Time.fixedDeltaTime);
+        }
+        else
+        {
+            characterRB.velocity = (movementVector * movementSpeed * Time.fixedDeltaTime);
+        }
+        
+        
     }
 
     void OnMovement(InputValue input)
@@ -36,4 +52,21 @@ public class Movement : MonoBehaviour
     {
         movementVector = Vector3.zero;
     }
+
+    //kollar ifall shiftknappen är nere då blir sprinting true
+    void OnSprint() 
+    {
+        sprinting = true;
+        Debug.Log("sprinting");
+    }
+    //ifall man släpper shiftknappen är sprinting false
+    void OnSprintStop() 
+    {
+        sprinting = false;
+        Debug.Log("not sprinting");
+    }
+   
+
+
+    
 }
